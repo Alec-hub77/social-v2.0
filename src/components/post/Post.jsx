@@ -6,9 +6,15 @@ import { Users } from '../../dummyData';
 function Post({post}) {
     
     const [like, setLike] = React.useState(post.like)
+    const [unlike, setUnlike] = React.useState(57)
     const [isliked, setIsLiked] = React.useState(false)
+    
     const onClickLike = () => {
         setLike(isliked ? like -1 : like +1 )
+        setIsLiked(!isliked)
+    }
+    const onClickUnlike = () => {
+        setUnlike(isliked ? unlike -1 : unlike +1 )
         setIsLiked(!isliked)
     }
     return (
@@ -33,8 +39,8 @@ function Post({post}) {
                         <img onClick={onClickLike} className="likeIcon" src="/assets/like.png" alt="" />
                         <img onClick={onClickLike} className="likeIcon" src="/assets/heart.png" alt="" />
                         <div className="postLikeCounter">{like} people like it</div>
-                        <img className="likeIcon" src="/assets/unlike.png" alt="" />
-                        <div className="postLikeCounter">120 people think its shit</div>
+                        <img onClick={onClickUnlike} className="likeIcon" src="/assets/unlike.png" alt="" />
+                        <div className="postLikeCounter">{unlike} people think its shit</div>
                     </div>
                     <div className="postBottomRight">
                         <span className="postCommentText">{post.comment} { post.comment <= 1 ? "comment" : "comments"}</span>
