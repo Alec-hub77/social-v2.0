@@ -18,13 +18,18 @@
     flex: 3;
     align-items: center;
 
-    .logo {
+    a {
+        text-decoration: none;
+    }
+    a span.logo{
         font-size: 24px;
         margin-left: 20px;
         font-weight: bold;
         cursor: pointer;
+        color: #fff;
+        
     }
-
+   
     .logoImg {
         width: 50px;
         height: 50px;
@@ -108,5 +113,19 @@
         border-radius: 50%;
         border: 2px solid #fff;
         cursor: pointer;
+        margin-right: 5px;
+    }
+
+    
+    a {
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+
+    .topbarUserName {
+        color: #fff;
+        text-decoration: none;
+
     }
 }
