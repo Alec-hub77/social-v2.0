@@ -8,6 +8,7 @@ function Profile() {
   const PF = process.env.REACT_APP_PABLIC_FOLDER
   const [user, setUser] = React.useState({})
   const username = useParams().username
+  
 
   React.useEffect(() => {
     const fetchUsers = async () => {
@@ -38,7 +39,7 @@ function Profile() {
             </div>
           </div>
           <div className="profileRightBottom">
-            <Feed profile={username}/>
+            <Feed username={username}/>
             <Rightbar user={user}/>
           </div>
         </div>

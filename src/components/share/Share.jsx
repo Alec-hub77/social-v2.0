@@ -2,7 +2,7 @@ import './share.scss'
 import {useContext, useRef, useState} from 'react'
 import axios from 'axios'
 import { AuthContext } from '../../contex/AuthContext';
-import {PermMedia, Label, Room, EmojiEmotions} from '@material-ui/icons';
+import {PermMedia, Label, Room, EmojiEmotions, Cancel} from '@material-ui/icons';
 
 function Share() {
     const {user} = useContext(AuthContext)
@@ -23,7 +23,7 @@ function Share() {
             data.append("name", fileName);
             data.append("file", file);
             newPost.img = fileName;
-            console.log(newPost);
+            
             try {
                 await axios.post("/upload", data)
                 window.location.reload();
@@ -37,7 +37,7 @@ function Share() {
             console.log(error)
         }
     }
-
+    
     return (
         <div className="share">
             <div className="shareWrapper">
@@ -46,6 +46,12 @@ function Share() {
                     <input ref={desc} placeholder={`Want to post some shit ${user.username} ?`} />
                 </div>
                 <hr className="shareHr"/>
+                {file && (
+                    <div className="shareImgContainer">
+                        <img src={URL.createObjectURL(file)} alt="" />
+                        <Cancel className="shareCancelImg" onClick={() => setFile(null)}/>
+                    </div>
+                )}
                 <form className="shareBottom" onSubmit={submitHandler}>
                     <div className="shareOptions">
                         <label htmlFor="file" className="shareOption">
