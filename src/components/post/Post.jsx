@@ -1,5 +1,5 @@
 import React from 'react';
-import { MoreVert } from '@material-ui/icons';
+import { MoreVert, Cancel } from '@material-ui/icons';
 import './post.scss';
 import axios from 'axios';
 import { format } from 'timeago.js';
@@ -11,10 +11,10 @@ function Post({ post }) {
   const [unlike, setUnlike] = React.useState(57);
   const [isliked, setIsLiked] = React.useState(false);
   const [user, setUser] = React.useState({});
-    
+  
   const PF = process.env.REACT_APP_PABLIC_FOLDER;
   const {user: currentUser} = React.useContext(AuthContext)
-
+  
   React.useEffect(() => {
     setIsLiked(post.likes.includes(currentUser._id))
   }, [currentUser._id, post.likes])
@@ -41,6 +41,34 @@ function Post({ post }) {
     setUnlike(isliked ? unlike - 1 : unlike + 1);
     setIsLiked(!isliked);
   };
+
+  //  POPUP
+
+  const [menu, setMenu] = React.useState(false)
+  const menuHandler = () => {
+    setMenu(!menu)
+  }
+
+  const popupRef = React.useRef()
+  const handleOutsideClick = (e) => {
+    if(!e.path.includes(popupRef.current)){
+      setMenu(false)
+    }
+    }
+React.useEffect(() => {
+  document.body.addEventListener('click', handleOutsideClick)
+}, [])
+
+  const onDeletePost = () => {
+    try {
+       axios.delete(`/posts/${post._id}`, {userId: currentUser._id});
+       window.location.reload()
+    } catch (error) {
+      console.log(error)
+    }
+    
+  }
+  
   return (
     <div className="post">
       <div className="postWrapper">
@@ -56,9 +84,13 @@ function Post({ post }) {
             <span className="postUserName">{user.username}</span>
             <span className="postDate">{format(post.createdAt)}</span>
           </div>
-          <div className="postTopRight">
+          <div  ref={popupRef} className="postTopRight" onClick={menuHandler}>
             <MoreVert />
+            {menu && <div className="postTopRightMenu">
+              <span onClick={onDeletePost}>Delete Post <Cancel style={{fontSize: "15px"}}/></span>
+            </div>}
           </div>
+          
         </div>
         <div className="postCenter">
           <span className="postText">{post?.desc}</span>
