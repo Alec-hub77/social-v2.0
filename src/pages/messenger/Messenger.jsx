@@ -3,6 +3,7 @@ import './messenger.scss';
 import { Topbar, Conversation, Message, ChatOnline } from '../../components';
 import { AuthContext } from '../../contex/AuthContext';
 import axios from 'axios';
+import {io} from 'socket.io-client';
 
 function Messenger() {
   const { user } = React.useContext(AuthContext);
@@ -10,7 +11,36 @@ function Messenger() {
   const [currentChat, setCurrentChat] = React.useState(null);
   const [messages, setMessages] = React.useState([]);
   const [newMessage, setNewMessage] = React.useState("");
+  const [arrivalMessage, setArrivalMessage] = React.useState(null);
+  const [onlineUsers, setOnlineUsers] = React.useState([]);
+  
+  const socket = React.useRef()
   const scrollRef = React.useRef()
+  
+
+  React.useEffect(() => {
+    socket.current = io("ws://localhost:8900")
+    socket.current.on("getMessage", data => {
+      setArrivalMessage({
+        sender: data.senderId,
+        text: data.text,
+        createdAt: Date.now()
+      })
+    })
+  })
+
+  React.useEffect(() => {
+    arrivalMessage && currentChat?.members.includes(arrivalMessage.sender) &&
+    setMessages(prev => [...prev, arrivalMessage])
+  }, [arrivalMessage, currentChat])
+
+  React.useEffect(() => {
+    socket.current.emit("addUser", user._id)
+    socket.current.on("getUsers", users => {
+      setOnlineUsers(user.followings.filter(f => users.some(u => u.userId === f)))
+    })
+  }, [user])
+
 
   React.useEffect(() => {
     const getConversations = async () => {
@@ -43,6 +73,14 @@ function Messenger() {
       text: newMessage,
       conversationId: currentChat._id
     }
+
+    const receiverId = currentChat.members.find(member => member !== user._id)
+
+    socket.current.emit("sendMessage", {
+      senderId: user._id,
+      receiverId,
+      text: newMessage, 
+    })
     try {
       const res = await axios.post("/messages", message);
       setMessages([...messages, res.data]);
@@ -51,6 +89,7 @@ function Messenger() {
       console.log(error)
     }
   }
+
 
   React.useEffect(() => {
     scrollRef.current?.scrollIntoView({behavior: "smooth"})
@@ -81,7 +120,7 @@ function Messenger() {
               <>
                 <div className="chatBoxTop">
                   {messages.map((m) => (
-                    <div ref={scrollRef}>
+                    <div key={m._id} ref={scrollRef}>
                       <Message key={m._id} message={m} own={m.sender === user._id}/>
                     </div>
                   ))}
@@ -106,7 +145,10 @@ function Messenger() {
         </div>
         <div className="chatOnline">
           <div className="chatOnlineWrapper">
-            <ChatOnline />
+            <ChatOnline 
+            onlineUsers={onlineUsers} 
+            currentId={user._id} 
+            setCurrentChat={setCurrentChat} />
           </div>
         </div>
       </div>
