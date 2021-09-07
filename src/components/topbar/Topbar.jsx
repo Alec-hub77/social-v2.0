@@ -37,10 +37,12 @@ function Topbar() {
             <Person />
             <span className="topbarIconBadge">1</span>
           </div>
+          <Link to="/messenger" style={{color: "#fff"}}>
           <div className="topbarIconItem">
             <Chat />
             <span className="topbarIconBadge">1</span>
           </div>
+          </Link>
           <div className="topbarIconItem">
             <Notifications />
             <span className="topbarIconBadge">1</span>

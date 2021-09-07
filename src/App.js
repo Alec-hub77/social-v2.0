@@ -1,7 +1,7 @@
 import './App.css';
 import {useContext} from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
-import { Home, Profile, Login, Register } from './pages';
+import { Home, Profile, Login, Register, Messenger } from './pages';
 import {AuthContext} from './contex/AuthContext';
 
 function App() {
@@ -18,6 +18,9 @@ function App() {
           </Route>
           <Route exact path="/login">
             {user ? <Redirect to="/"/> : <Login /> }
+          </Route>
+          <Route exact path="/messenger">
+            {!user ? <Redirect to="/"/> : <Messenger /> }
           </Route>
           <Route path="/profile/:username">
             <Profile />
